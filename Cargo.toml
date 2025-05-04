@@ -1,0 +1,16 @@
+[package]
+name = "devlacruz_hashlib"
+version = "0.1.1"  # Actualiza para coincidir con pyproject.toml
+edition = "2021"
+description = "Extensión de hashing acelerado con Rust y PyO3"
+license = "MIT"
+repository = "https://github.com/DevLaCruz/devlacruz_hashlib"
+
+[lib]
+name = "devlacruz_hashlib"  # Asegúrate de que esto coincida con el nombre del módulo Python
+crate-type = ["cdylib"]
+
+[dependencies]
+pyo3 = { version = "0.24.2", features = ["extension-module"] }
+sha2 = "0.10"
+hex = "0.4"
