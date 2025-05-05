@@ -47,7 +47,7 @@ fn hash_bytes(py: Python<'_>, data: &[u8]) -> PyResult<String> {
 
 /// Inicialización del módulo Python
 #[pymodule]
-fn devlacruz_hashlib(py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
+fn devlacruz_hashlib(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(hash_id_simple, m)?)?;
     m.add_function(wrap_pyfunction!(hash_id, m)?)?;
     m.add_function(wrap_pyfunction!(hash_string, m)?)?;

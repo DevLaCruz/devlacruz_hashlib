@@ -29,14 +29,15 @@ jobs:
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@stable
         
-      - name: Build wheels - manylinux
+      - # En el job build_wheels
+      - name: Build wheels - Linux
         if: runner.os == 'Linux'
         uses: PyO3/maturin-action@v1
         with:
           target: x86_64
-          args: --release --strip --compatibility manylinux2014
-          manylinux: auto
-          container: off
+          args: --release --strip
+          manylinux: 2014
+          container: on  # Cambiar esto de 'off' a 'on'
           
       - name: Build wheels - Windows & macOS
         if: runner.os != 'Linux'
