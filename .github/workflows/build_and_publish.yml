@@ -1,0 +1,76 @@
+name: Build and Publish
+
+on:
+  push:
+    tags:
+      - 'v*'  # Se activa cuando empujas un tag que comienza con 'v'
+
+jobs:
+  build_wheels:
+    name: Build wheels on ${{ matrix.os }} for Python ${{ matrix.python }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        python: ["3.7", "3.8", "3.9", "3.10", "3.11", "3.12", "3.13"]
+        exclude:
+          # Excluir combinaciones problemáticas o innecesarias
+          - os: macos-latest
+            python: "3.7"  # Por ejemplo, si macOS no soporta bien Python 3.7
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python }}
+          
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        
+      - name: Build wheels - manylinux
+        if: runner.os == 'Linux'
+        uses: PyO3/maturin-action@v1
+        with:
+          target: x86_64
+          args: --release --strip --compatibility manylinux2014
+          manylinux: auto
+          container: off
+          
+      - name: Build wheels - Windows & macOS
+        if: runner.os != 'Linux'
+        uses: PyO3/maturin-action@v1
+        with:
+          args: --release --strip
+          
+      - name: Upload wheels
+        uses: actions/upload-artifact@v3
+        with:
+          name: wheels-${{ matrix.os }}-${{ matrix.python }}
+          path: target/wheels/*.whl
+          
+  publish:
+    name: Publish to PyPI
+    needs: build_wheels
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/download-artifact@v3
+        with:
+          path: dist/
+          
+      - name: Move wheels to dist directory
+        run: |
+          mkdir -p dist-final
+          find dist -type f -name "*.whl" -exec cp {} dist-final/ \;
+          
+      - name: Display wheels to be published
+        run: ls -la dist-final/
+          
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          password: ${{ secrets.PYPI_API_TOKEN }}
+          packages-dir: dist-final/
+          skip-existing: true
