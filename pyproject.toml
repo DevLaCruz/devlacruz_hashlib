@@ -4,14 +4,13 @@ build-backend = "maturin"
 
 [project]
 name = "devlacruz_hashlib"
-version = "0.1.5"
+version = "0.1.6"
 description = "Extensión de hashing SHA-256 acelerado con Rust y PyO3"
 authors = [{ name = "Alejandro De La Cruz", email = "devlacruz@axtosys.com" }]
 license = "MIT"
-requires-python = ">=3.7,<4.0"
+requires-python = ">=3.8,<4.0"
 classifiers = [
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.7",
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",

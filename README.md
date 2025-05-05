@@ -26,7 +26,7 @@
 * **GIL-free** execution for true parallelism in multi-threaded Python apps
 * **Cross-platform** support: Linux, Windows, and macOS
 * **Pure-Python API**: easy-to-use functions for integers, strings, and bytes
-* **Python 3.7+** compatibility
+* **Python 3.8+** compatibility
 
 ---
 
