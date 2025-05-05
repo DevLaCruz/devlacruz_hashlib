@@ -20,9 +20,9 @@ jobs:
             python: "3.7"  # Por ejemplo, si macOS no soporta bien Python 3.7
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4  # Actualizado de v3 a v4
 
-      - uses: actions/setup-python@v4
+      - uses: actions/setup-python@v5  # Actualizado de v4 a v5
         with:
           python-version: ${{ matrix.python }}
           
@@ -45,7 +45,7 @@ jobs:
           args: --release --strip
           
       - name: Upload wheels
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4  # Actualizado de v3 a v4
         with:
           name: wheels-${{ matrix.os }}-${{ matrix.python }}
           path: target/wheels/*.whl
@@ -56,7 +56,7 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4  # Actualizado de v3 a v4
         with:
           path: dist/
           
