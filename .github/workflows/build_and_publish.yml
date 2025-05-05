@@ -3,7 +3,7 @@ name: Build and Publish
 on:
   push:
     tags:
-      - 'v*'  # Se activa cuando empujas un tag que comienza con 'v'
+      - 'v*'
 
 jobs:
   build_wheels:
@@ -29,7 +29,7 @@ jobs:
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@stable
         
-      - # En el job build_wheels
+      # Compilación en Linux usando contenedor manylinux
       - name: Build wheels - Linux
         if: runner.os == 'Linux'
         uses: PyO3/maturin-action@v1
@@ -37,16 +37,18 @@ jobs:
           target: x86_64
           args: --release --strip
           manylinux: 2014
-          container: on  # Cambiar esto de 'off' a 'on'
+          container: on
           
+      # Compilación en Windows y macOS
       - name: Build wheels - Windows & macOS
         if: runner.os != 'Linux'
         uses: PyO3/maturin-action@v1
         with:
           args: --release --strip
           
+      # Subir los artifacts
       - name: Upload wheels
-        uses: actions/upload-artifact@v4  # Actualizado de v3 a v4
+        uses: actions/upload-artifact@v4
         with:
           name: wheels-${{ matrix.os }}-${{ matrix.python }}
           path: target/wheels/*.whl
@@ -57,21 +59,26 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-      - uses: actions/download-artifact@v4  # Actualizado de v3 a v4
+      # Descargar todos los wheels generados
+      - uses: actions/download-artifact@v4
         with:
           path: dist/
           
+      # Mover los wheels a un directorio único
       - name: Move wheels to dist directory
         run: |
           mkdir -p dist-final
           find dist -type f -name "*.whl" -exec cp {} dist-final/ \;
           
+      # Mostrar los archivos a publicar para diagnóstico
       - name: Display wheels to be published
         run: ls -la dist-final/
           
+      # Publicar en PyPI
       - name: Publish to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           password: ${{ secrets.PYPI_API_TOKEN }}
           packages-dir: dist-final/
           skip-existing: true
+          verbose: true
